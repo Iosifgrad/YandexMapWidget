@@ -61,6 +61,5 @@ class YandexMap(QMainWindow):
 
 
 app = QApplication(sys.argv)
-ex = YandexMap()
-ex.show()
+YandexMap().show()
 sys.exit(app.exec_())
