@@ -32,8 +32,7 @@ class YandexMap(QMainWindow):
         geocoder_params = {
         "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
         "geocode": find,
-        "format": "json",
-        "kind": 'district'
+        "format": "json"
         }
 
         response = requests.get(geocoder_api_server, params=geocoder_params)
@@ -61,5 +60,6 @@ class YandexMap(QMainWindow):
 
 
 app = QApplication(sys.argv)
-YandexMap().show()
+ex = YandexMap()
+ex.show()
 sys.exit(app.exec_())
