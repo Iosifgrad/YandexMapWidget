@@ -66,10 +66,10 @@ class YandexMap(QMainWindow):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
             if self.delta:
-                float(self.delta) += 0.1
+                self.delta = str(float(self.delta) + 0.1)
         if event.key() == Qt.Key_PageDown:
             if self.delta:
-                float(self.delta) -= 0.1
+                self.delta = str(float(self.delta) - 0.1)
                 
 
 
