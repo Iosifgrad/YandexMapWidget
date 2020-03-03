@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMainWindow, QListView, QPushButton, QPushButton, QLineEdit, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5 import Qt, QtCore, uic
+from PyQt5.QtCore import Qt
 import sys, requests
 from PIL import Image
 
@@ -57,6 +58,11 @@ class YandexMap(QMainWindow):
     def set_image(self):
         pixmap = QPixmap('map.png')
         self.map.setPixmap(pixmap)
+    
+    def keyPressEvent(self, event):
+        if int(event.modifiers()) == (Qt.AltModifier + Qt.ShiftModifier):
+            if event.key() == Qt.Key_R:
+                pass
 
 
 app = QApplication(sys.argv)
