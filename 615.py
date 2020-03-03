@@ -13,16 +13,20 @@ class YandexMap(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.search_butt.clicked.connect(self.search)
+        self.search_butt.clicked.connect(self.check_input)
     
+    def check_input(self):
+        self.delta = str(self.delta_input.text())
+        self.find = self.address_input.text()
+        self.search()
+
     def search(self):
         # функцию писал на коленке, можешь оптимизировать, если нужно. Имена виджетов оставь
-        find = self.address_input.text()
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 
         geocoder_params = {
         "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
-        "geocode": find,
+        "geocode": self.find,
         "format": "json",
         }
 
@@ -43,7 +47,7 @@ class YandexMap(QMainWindow):
 
         map_params = {
         "ll": ','.join(coords.split()),
-        "spn": ",".join([self.delta_input.text(), self.delta_input.text()]),
+        "spn": ",".join([self.delta, self.delta]),
         "l": "map"
         }
 
@@ -60,9 +64,13 @@ class YandexMap(QMainWindow):
         self.map.setPixmap(pixmap)
     
     def keyPressEvent(self, event):
-        if int(event.modifiers()) == (Qt.AltModifier + Qt.ShiftModifier):
-            if event.key() == Qt.Key_R:
-                pass
+        if event.key() == Qt.Key_PageUp:
+            if self.delta:
+                float(self.delta) += 0.1
+        if event.key() == Qt.Key_PageDown:
+            if self.delta:
+                float(self.delta) -= 0.1
+                
 
 
 app = QApplication(sys.argv)
