@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMainWindow, QListView, QPushButton, QPushButton, QLineEdit, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5 import Qt, QtCore, uic
+from PyQt5.QtCore import Qt
 import sys, requests
 from PIL import Image
 
@@ -12,37 +13,29 @@ class YandexMap(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.search_butt.clicked.connect(self.search)
+        self.search_butt.clicked.connect(self.check_input)
     
-    def search(self):
-        # функцию писал на коленке, можешь оптимизировать, если нужно. Имена виджетов оставь
-        find = self.address_input.text()
+    def check_input(self):
+        self.delta = str(self.delta_input.text())
+        self.find = self.address_input.text()
+        self.sub()
+        self.search()
+
+    def sub(self):
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
-
         geocoder_params = {
         "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
-        "geocode": find,
-        "format": "json",
-        }
-
-        response = requests.get(geocoder_api_server, params=geocoder_params)
-        find = response.json()
-        find = ','.join(find['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split())
-
-        geocoder_params = {
-        "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
-        "geocode": find,
-        "format": "json"
-        }
+        "geocode": self.find,
+        "format": "json"}
 
         response = requests.get(geocoder_api_server, params=geocoder_params)
         json_response = response.json()
-        coords = json_response["response"]["GeoObjectCollection"][
-        "featureMember"][0]["GeoObject"]['Point']['pos']
+        self.coords = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]['Point']['pos']
 
+    def search(self):
         map_params = {
-        "ll": ','.join(coords.split()),
-        "spn": ",".join([self.delta_input.text(), self.delta_input.text()]),
+        "ll": ','.join(self.coords.split()),
+        "spn": ",".join([self.delta, self.delta]),
         "l": "map"
         }
 
@@ -57,6 +50,22 @@ class YandexMap(QMainWindow):
     def set_image(self):
         pixmap = QPixmap('map.png')
         self.map.setPixmap(pixmap)
+    
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            if self.delta:
+                self.delta = str(float(self.delta) + 0.05)
+                self.search()
+                print(self.delta)
+        if event.key() == Qt.Key_PageDown:
+            if self.delta:
+                self.delta = str(float(self.delta) - 0.05)
+                self.search()
+                print(self.delta)
+        if event.key() == Qt.Key_Up:
+            self.coords = [str(float(self.coords[0]) - 1), self.coords[1]]
+            self.search()
+
 
 
 app = QApplication(sys.argv)
